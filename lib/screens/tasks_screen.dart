@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:todoey_flutter/models/task.dart';
 import 'package:todoey_flutter/widgets/tasks_list.dart';
 
 import 'add_task_screen.dart';
 
-class TasksScreen extends StatelessWidget {
-  const TasksScreen({Key? key}) : super(key: key);
+class TasksScreen extends StatefulWidget {
+  @override
+  State<TasksScreen> createState() => _TasksScreenState();
+}
+
+class _TasksScreenState extends State<TasksScreen> {
+  List<Task> tasks = [
+    Task(name: 'Buy Milk'),
+    Task(name: 'Buy Eggs'),
+    Task(name: 'Buy Bread'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +23,22 @@ class TasksScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-              //  isScrollControlled: true,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25),
-                topRight: Radius.circular(25),
-              )),
-              context: context,
-              builder: (context) => AddTaskScreen());
+            //  isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            )),
+            context: context,
+            builder: (context) => AddTaskScreen(
+              (newTaskTitle) {
+                setState(() {
+                  tasks.add(Task(name: newTaskTitle));
+                });
+                Navigator.pop(context);
+              },
+            ),
+          );
         },
         backgroundColor: Colors.lightBlueAccent,
         child: Icon(Icons.add),
@@ -37,8 +55,8 @@ class TasksScreen extends StatelessWidget {
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                CircleAvatar(
+              children: [
+                const CircleAvatar(
                   child: Icon(
                     Icons.list,
                     size: 30,
@@ -47,10 +65,10 @@ class TasksScreen extends StatelessWidget {
                   backgroundColor: Colors.white,
                   radius: 30.0,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
-                Text(
+                const Text(
                   'Todoey',
                   style: TextStyle(
                     color: Colors.white,
@@ -59,8 +77,8 @@ class TasksScreen extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '12 Tasks',
-                  style: TextStyle(
+                  '${tasks.length} Tasks',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                   ),
@@ -77,7 +95,9 @@ class TasksScreen extends StatelessWidget {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   )),
-              child: TasksList(),
+              child: TasksList(
+                tasks: tasks,
+              ),
             ),
           )
         ],
